@@ -1,3 +1,5 @@
+package SpringMVC;
+
 import java.time.LocalDateTime;
 
 public class Flight {
@@ -8,16 +10,13 @@ public class Flight {
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
 
-    public Flight(int stops, int number, String departureAirport, String arrivalAirport, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
+    Flight(int stops, int number, String departureAirport, String arrivalAirport, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
         this.stops = stops;
         this.number = number;
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
         this.departureDateTime = departureDateTime;
         this.arrivalDateTime = arrivalDateTime;
-    }
-
-    public Flight() {
     }
 
     public int getNumber() {

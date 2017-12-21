@@ -1,3 +1,4 @@
+package SpringMVC;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,12 +19,6 @@ import java.util.List;
 
 public class FlightsSearchingMachine {
 
-    public static void main(String[] args) {
-        FlightsSearchingMachine flightsSearchingMachine = new FlightsSearchingMachine();
-        String flightsByDateTime = flightsSearchingMachine.getFlightsByDateTime("DUB", "WRO", "2017-12-21T07:00", "2017-12-22T21:00");
-
-    }
-
     private List<Flight> parseJsonToObjects(String flightsJson, LocalDateTime departDateTime, String departureAirport, String arrivalAirport) {
         ArrayList<Flight> result = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -36,6 +31,7 @@ public class FlightsSearchingMachine {
 
 
         assert node != null;
+        node = node.get("days");
 
         LocalDateTime dateTime = departDateTime;
         for (JsonNode flights : node) {
@@ -62,7 +58,6 @@ public class FlightsSearchingMachine {
         return result;
     }
 
-
     public String getFlightsByDateTime(String departureAirport, String arrivalAirport, String departureDateTime, String arrivalDateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
@@ -70,11 +65,10 @@ public class FlightsSearchingMachine {
         LocalDateTime arrivDateTime = LocalDateTime.parse(arrivalDateTime, formatter);
 
         String url = "https://api.ryanair.com/timetable/3/schedules/" + departureAirport + "/" + arrivalAirport + "/years/" + departDateTime.getYear() + "/months/" + departDateTime.getMonthValue();
-//        return getSource(url).toString();
-        String source = "[{\"day\":21,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"19:10\",\"arrivalTime\":\"22:45\"},{\"number\":\"1555\",\"departureTime\":\"19:35\",\"arrivalTime\":\"23:10\"}]},{\"day\":22,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"14:20\",\"arrivalTime\":\"17:55\"}]},{\"day\":23,\"flights\":[{\"number\":\"1555\",\"departureTime\":\"20:15\",\"arrivalTime\":\"23:50\"}]},{\"day\":24,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"12:55\",\"arrivalTime\":\"16:30\"}]},{\"day\":26,\"flights\":[{\"number\":\"1555\",\"departureTime\":\"17:45\",\"arrivalTime\":\"21:20\"}]},{\"day\":27,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"19:10\",\"arrivalTime\":\"22:45\"}]},{\"day\":28,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"19:10\",\"arrivalTime\":\"22:45\"},{\"number\":\"1555\",\"departureTime\":\"19:35\",\"arrivalTime\":\"23:10\"}]},{\"day\":29,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"14:20\",\"arrivalTime\":\"17:55\"}]},{\"day\":30,\"flights\":[{\"number\":\"1555\",\"departureTime\":\"20:15\",\"arrivalTime\":\"23:50\"}]},{\"day\":31,\"flights\":[{\"number\":\"1926\",\"departureTime\":\"15:20\",\"arrivalTime\":\"18:55\"}]}]";
+
+        String source = getSource(url).toString();
         List<Flight> parsedFlights = parseJsonToObjects(source, departDateTime, departureAirport, arrivalAirport);
         return filterAndParseToJson(parsedFlights, departDateTime, arrivDateTime);
-//        return "";
     }
 
     private String filterAndParseToJson(List<Flight> parsedFlights, LocalDateTime departDateTimeRange, LocalDateTime arrivalDateTimeRange) {
